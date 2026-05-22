@@ -1,0 +1,19 @@
+# Users API requests for auth routes
+
+### Create user
+POST http://localhost:3000/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### Get user by id
+GET http://localhost:3000/auth/1
+
+### Find users by email
+GET http://localhost:3000/auth?email=user@example.com
+
+### Delete user by id
+DELETE http://localhost:3000/auth/2
