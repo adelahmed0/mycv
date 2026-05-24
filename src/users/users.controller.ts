@@ -15,6 +15,7 @@ import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 
 @Controller('auth')
+@Serialize(UserDto)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -23,10 +24,8 @@ export class UsersController {
     return this.usersService.create(body.email, body.password);
   }
 
-  @Serialize(UserDto)
   @Get(':id')
   findUser(@Param('id') id: string) {
-    console.log('handler is running');
     return this.usersService.findOne(parseInt(id));
   }
 
