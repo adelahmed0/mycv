@@ -1,7 +1,14 @@
-# Auth
-
 ### Sign up
-POST http://localhost:3000/auth/sign-up
+POST http://localhost:3000/users/sign-up
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### Sign in
+POST http://localhost:3000/users/signin
 Content-Type: application/json
 
 {
