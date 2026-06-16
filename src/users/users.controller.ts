@@ -1,36 +1,26 @@
 import {
   Controller,
-  Post,
   Body,
   Get,
   Param,
   Query,
   Delete,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
-import { AuthService } from './auth.service';
 
-@Controller('auth')
+@Controller('users')
 @Serialize(UserDto)
 export class UsersController {
-  constructor(
-    private usersService: UsersService,
-    private authService: AuthService,
-  ) {}
-
-  @Post('sign-up')
-  createUser(@Body() body: CreateUserDto) {
-    return this.authService.signup(body.email, body.password);
-  }
+  constructor(private usersService: UsersService) {}
 
   @Get(':id')
-  findUser(@Param('id') id: string) {
-    return this.usersService.findOne(parseInt(id));
+  findUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Get()
@@ -39,12 +29,15 @@ export class UsersController {
   }
 
   @Delete(':id')
-  removeUser(@Param('id') id: string) {
-    return this.usersService.remove(parseInt(id));
+  removeUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 
   @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.usersService.update(parseInt(id), body);
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUserDto,
+  ) {
+    return this.usersService.update(id, body);
   }
 }

@@ -1,6 +1,6 @@
-# Users API requests for auth routes
+# Auth
 
-### Create user
+### Sign up
 POST http://localhost:3000/auth/sign-up
 Content-Type: application/json
 
@@ -9,17 +9,19 @@ Content-Type: application/json
   "password": "password123"
 }
 
+# Users
+
 ### Get user by id
-GET http://localhost:3000/auth/5
+GET http://localhost:3000/users/5
 
 ### Find users by email
-GET http://localhost:3000/auth?email=user@example.com
+GET http://localhost:3000/users?email=user@example.com
 
 ### Delete user by id
-DELETE http://localhost:3000/auth/2
+DELETE http://localhost:3000/users/2
 
 ### Update user by id
-PATCH http://localhost:3000/auth/5
+PATCH http://localhost:3000/users/5
 Content-Type: application/json
 
 {
