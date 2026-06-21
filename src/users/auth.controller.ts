@@ -1,34 +1,28 @@
-import { Body, Controller, Post, Session, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, Session } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 
 interface SessionData {
-  color?: string;
+  userId?: number;
 }
 
 @Controller('auth')
 @Serialize(UserDto)
 export class AuthController {
   constructor(private authService: AuthService) {}
-
-  @Get('/colors/:color')
-  setColor(@Param('color') color: string, @Session() session: SessionData) {
-    session.color = color;
-  }
-
-  @Get('/colors')
-  getColor(@Session() session: SessionData): string | undefined {
-    return session.color;
-  }
   @Post('sign-up')
-  signUp(@Body() body: CreateUserDto) {
-    return this.authService.signup(body.email, body.password);
+  async signUp(@Body() body: CreateUserDto, @Session() session: SessionData) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 
   @Post('signin')
-  signIn(@Body() body: CreateUserDto) {
-    return this.authService.signin(body.email, body.password);
+  async signIn(@Body() body: CreateUserDto, @Session() session: SessionData) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 }
