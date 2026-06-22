@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from './users.entity';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 
@@ -29,6 +31,19 @@ export class AuthService {
     // create a new user and save it
     const user = await this.usersService.create(email, result);
     // return the user
+    return user;
+  }
+
+  async findOne(userId?: number): Promise<User> {
+    if (!userId) {
+      throw new UnauthorizedException('not logged in');
+    }
+
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
     return user;
   }
 
