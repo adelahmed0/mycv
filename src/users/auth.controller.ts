@@ -14,9 +14,15 @@ interface SessionData {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('/whoami')
+  @Get('whoami')
   async whoami(@Session() session: SessionData): Promise<User> {
     return this.authService.findOne(session.userId);
+  }
+
+  @Post('signout')
+  signOut(@Session() session: SessionData) {
+    session.userId = undefined;
+    return;
   }
 
   @Post('sign-up')
