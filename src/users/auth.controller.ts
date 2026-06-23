@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { User } from './users.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 interface SessionData {
   userId?: number;
@@ -14,9 +15,14 @@ interface SessionData {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // @Get('whoami')
+  // async whoami(@Session() session: SessionData): Promise<User> {
+  //   return this.authService.findOne(session.userId);
+  // }
+
   @Get('whoami')
-  async whoami(@Session() session: SessionData): Promise<User> {
-    return this.authService.findOne(session.userId);
+  whoami(@CurrentUser() user: User) {
+    return user;
   }
 
   @Post('signout')
