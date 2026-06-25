@@ -1,10 +1,19 @@
-import { Body, Controller, Post, Session, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Session,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { User } from './users.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+
 interface SessionData {
   userId?: number;
 }
@@ -19,6 +28,7 @@ export class AuthController {
   //   return this.authService.findOne(session.userId);
   // }
 
+  @UseGuards(AuthGuard)
   @Get('whoami')
   whoami(@CurrentUser() user: User) {
     return user;
