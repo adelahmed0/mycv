@@ -7,6 +7,7 @@ import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
 import { User } from './users.entity';
 import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
+import { UserOwnerGuard } from '../guards/user-owner.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -14,6 +15,7 @@ import { CurrentUserInterceptor } from './interceptors/current-user.interceptor'
   providers: [
     UsersService,
     AuthService,
+    UserOwnerGuard,
     {
       provide: APP_INTERCEPTOR,
       useClass: CurrentUserInterceptor,
