@@ -1,0 +1,66 @@
+---
+description: NestJS conventions and coding standards for mycv backend
+alwaysApply: true
+---
+
+# mycv — NestJS Backend Standards
+
+## Project Structure
+
+- Feature modules live under `src/<feature>/` with `*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.entity.ts`.
+- Shared cross-cutting code: `src/guards/`, `src/interceptors/`, `src/<feature>/dtos/`, `src/<feature>/decorators/`.
+- Register entities via `TypeOrmModule.forFeature([Entity])` inside the feature module.
+
+## Controllers & DTOs
+
+- Validate request bodies with DTO classes using `class-validator` decorators (`@IsEmail()`, `@IsString()`, etc.).
+- Never return entities directly without serialization — use `@Serialize(DtoClass)` on the controller.
+- Response DTOs use `@Expose()` on each field; `SerializeInterceptor` strips everything else.
+
+```typescript
+// ✅ GOOD
+@Controller('users')
+@Serialize(UserDto)
+export class UsersController {
+  @Patch(':id')
+  updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDto) {
+    return this.usersService.update(id, body);
+  }
+}
+```
+
+## Auth & Guards
+
+- Session auth via `cookie-session`; store `userId` in session on sign-in/sign-up.
+- Protect routes with `@UseGuards(AuthGuard)`; ownership checks with `UserOwnerGuard`.
+- Access the logged-in user via `@CurrentUser()` decorator (set by `CurrentUserInterceptor`).
+
+## Services & Errors
+
+- Business logic belongs in services, not controllers.
+- Throw NestJS HTTP exceptions (`BadRequestException`, `NotFoundException`, `UnauthorizedException`, `ForbiddenException`) — never return error objects manually.
+- Use `ParseIntPipe` for route params that must be numbers.
+
+```typescript
+// ❌ BAD
+if (!user) return { error: 'not found' };
+
+// ✅ GOOD
+if (!user) throw new NotFoundException('user not found');
+```
+
+## TypeORM Entities
+
+- One entity per file, named `*.entity.ts`, exported as a class with `@Entity()`.
+- Keep lifecycle hooks (`@AfterInsert`, etc.) minimal — avoid heavy logic in entities.
+
+## Testing
+
+- Unit tests: `*.spec.ts` colocated with source; use `Test.createTestingModule` with mocked dependencies (`useValue`).
+- E2E tests live in `test/` with `jest-e2e.json` config.
+
+## Code Style
+
+- Prettier: single quotes, trailing commas.
+- Match existing import style and NestJS decorators order (imports → class decorator → method decorators).
+- Minimize scope — only change what the task requires; no unrelated refactors.
