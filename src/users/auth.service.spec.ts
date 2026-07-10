@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
 import { User } from './users.entity';
@@ -14,6 +18,10 @@ describe('AuthService', () => {
       find: (email: string) => {
         const filteredUsers = users.filter((user) => user.email === email);
         return Promise.resolve(filteredUsers);
+      },
+      findOne: (id: number) => {
+        const user = users.find((u) => u.id === id);
+        return Promise.resolve(user ?? null);
       },
       create: (email: string, password: string) => {
         const user = {
@@ -66,5 +74,30 @@ describe('AuthService', () => {
     await expect(
       service.signin('laskdjf@alskdfj.com', 'laksdlfkj'),
     ).rejects.toThrow(BadRequestException);
+  });
+
+  it('returns a user if signin password is correct', async () => {
+    const createdUser = await service.signup('test@test.com', 'password');
+    const user = await service.signin('test@test.com', 'password');
+
+    expect(user.id).toEqual(createdUser.id);
+    expect(user.email).toEqual('test@test.com');
+  });
+
+  describe('findOne', () => {
+    it('throws if user is not logged in', async () => {
+      await expect(service.findOne()).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('throws if user is not found', async () => {
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+    });
+
+    it('returns a user if id is valid', async () => {
+      const createdUser = await service.signup('test@test.com', 'password');
+      const user = await service.findOne(createdUser.id);
+
+      expect(user).toEqual(createdUser);
+    });
   });
 });
