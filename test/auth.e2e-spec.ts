@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
+import cookieSession from 'cookie-session';
 import { AppModule } from './../src/app.module';
-import { setupApp } from '../src/setup-app';
 
 describe('Authentication system', () => {
   let app: INestApplication<App>;
@@ -14,7 +14,16 @@ describe('Authentication system', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    setupApp(app);
+    app.use(
+      cookieSession({
+        keys: ['asdfasdf'],
+      }),
+    );
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+      }),
+    );
     await app.init();
   });
 
