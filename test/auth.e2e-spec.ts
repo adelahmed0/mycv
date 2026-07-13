@@ -28,7 +28,7 @@ describe('Authentication system', () => {
   });
 
   it('handles a signup request', () => {
-    const email = `test1234@test.com`;
+    const email = `test${Date.now()}@test.com`;
     return request(app.getHttpServer())
       .post('/auth/sign-up')
       .send({ email, password: '123456' })
@@ -41,17 +41,21 @@ describe('Authentication system', () => {
   });
 
   it('signup as a new user then get the currently logged in user', async () => {
-    const email = `test1234@test.com`;
+    const email = `test${Date.now()}@test.com`;
     const res = await request(app.getHttpServer())
       .post('/auth/sign-up')
       .send({ email, password: '123456' })
       .expect(201);
     const cookie = res.get('Set-Cookie');
-    const { body } = await request(app.getHttpServer());
-    await request(app.getHttpServer())
+    const whoAmIResponse = await request(app.getHttpServer())
       .get('/auth/whoami')
-      .set('Cookie', cookie)
+      .set('Cookie', cookie as string[])
       .expect(200);
+    const body = whoAmIResponse.body as { id: number; email: string };
     expect(body.email).toEqual(email);
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 });
