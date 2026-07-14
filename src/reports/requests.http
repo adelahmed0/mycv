@@ -1,0 +1,15 @@
+# Reports
+
+### Create a report (requires signed-in session cookie)
+POST http://localhost:3000/reports
+Content-Type: application/json
+
+{
+  "make": "toyota",
+  "model": "corolla",
+  "year": 2020,
+  "mileage": 50000,
+  "lng": 31.2357,
+  "lat": 30.0444,
+  "price": 250000
+}
