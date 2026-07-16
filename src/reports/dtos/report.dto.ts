@@ -3,6 +3,8 @@ import { Report } from '../reports.entity';
 
 export class ReportDto {
   @Expose()
+  id: number;
+  @Expose()
   make: string;
   @Expose()
   model: string;
