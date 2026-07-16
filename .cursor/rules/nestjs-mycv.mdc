@@ -33,7 +33,7 @@ export class UsersController {
 
 - Session auth via `cookie-session`; store `userId` in session on sign-in/sign-up.
 - Protect routes with `@UseGuards(AuthGuard)`; ownership checks with `UserOwnerGuard`.
-- Access the logged-in user via `@CurrentUser()` decorator (set by `CurrentUserInterceptor`).
+- Access the logged-in user via `@CurrentUser()` decorator (set by `CurrentUserMiddleware`).
 
 ## Services & Errors
 
