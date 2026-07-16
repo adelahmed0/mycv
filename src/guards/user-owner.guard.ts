@@ -8,7 +8,7 @@ import { User } from '../users/users.entity';
 
 interface RequestWithUser {
   params: { id: string };
-  currentUser?: User;
+  currentUser?: User | null;
 }
 
 @Injectable()

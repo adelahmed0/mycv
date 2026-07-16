@@ -9,7 +9,7 @@ interface SessionData {
 
 interface RequestWithUser extends Request {
   session: SessionData;
-  currentUser?: User;
+  currentUser?: User | null;
 }
 
 @Injectable()
